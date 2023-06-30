@@ -1,0 +1,252 @@
+
+DROP TABLE [OrderTransaction]
+go
+
+DROP TABLE [ShopTransaction]
+go
+
+DROP TABLE [Transaction]
+go
+
+DROP TABLE [OrderItems]
+go
+
+DROP TABLE [Article]
+go
+
+DROP TABLE [Shop]
+go
+
+DROP TABLE [Order]
+go
+
+DROP TABLE [Buyer]
+go
+
+DROP TABLE [Line]
+go
+
+DROP TABLE [City]
+go
+
+CREATE TABLE [Article]
+( 
+	[IDArticle]          integer  IDENTITY  NOT NULL ,
+	[Name]               nvarchar(100)  NULL ,
+	[ShopQuantity]       integer  NULL 
+	CONSTRAINT [Default_Value_306_2124322862]
+		 DEFAULT  0,
+	[Price]              integer  NULL ,
+	[IDShop]             integer  NULL 
+)
+go
+
+CREATE TABLE [Buyer]
+( 
+	[IDBuyer]            integer  IDENTITY  NOT NULL ,
+	[Name]               nvarchar(100)  NULL ,
+	[Credit]             decimal(10,3)  NULL ,
+	[IDCity]             integer  NULL 
+)
+go
+
+CREATE TABLE [City]
+( 
+	[IDCity]             integer  IDENTITY  NOT NULL ,
+	[Name]               nvarchar(100)  NULL 
+)
+go
+
+CREATE TABLE [Line]
+( 
+	[Distance]           integer  NULL ,
+	[IDLine]             integer  IDENTITY  NOT NULL ,
+	[City1]              integer  NULL ,
+	[City2]              integer  NULL 
+)
+go
+
+CREATE TABLE [Order]
+( 
+	[IDOrder]            integer  IDENTITY  NOT NULL ,
+	[Status]             nvarchar(100)  NULL ,
+	[Price]              decimal(10,3)  NULL ,
+	[DiscountPercentageSystem] integer  NULL ,
+	[Route]              nvarchar(100)  NULL ,
+	[ReceivedTime]       datetime  NULL ,
+	[SentTime]           datetime  NULL ,
+	[IDBuyer]            integer  NULL ,
+	[IDCity]             integer  NULL ,
+	[OrderTravels]       integer  NULL 
+)
+go
+
+CREATE TABLE [OrderItems]
+( 
+	[OrderQuantity]      integer  NULL ,
+	[Price]              integer  NULL ,
+	[DiscountPercentage] integer  NULL ,
+	[OrderTravels]       integer  NULL ,
+	[IDOrder]            integer  NOT NULL ,
+	[IDArticle]          integer  NOT NULL 
+)
+go
+
+CREATE TABLE [OrderTransaction]
+( 
+	[IDTransaction]      integer  NOT NULL 
+)
+go
+
+CREATE TABLE [Shop]
+( 
+	[IDShop]             integer  IDENTITY  NOT NULL ,
+	[Name]               nvarchar(100)  NULL ,
+	[DiscountPercentage] integer  NULL ,
+	[Credit]             decimal(10,3)  NULL ,
+	[IDCity]             integer  NULL 
+)
+go
+
+CREATE TABLE [ShopTransaction]
+( 
+	[IDTransaction]      integer  NOT NULL ,
+	[IDShop]             integer  NULL 
+)
+go
+
+CREATE TABLE [Transaction]
+( 
+	[IDTransaction]      integer  IDENTITY  NOT NULL ,
+	[Quantity]           decimal(10,3)  NULL ,
+	[ExecutionTime]      datetime  NULL ,
+	[IDOrder]            integer  NULL 
+)
+go
+
+ALTER TABLE [Article]
+	ADD CONSTRAINT [XPKArticle] PRIMARY KEY  CLUSTERED ([IDArticle] ASC)
+go
+
+ALTER TABLE [Buyer]
+	ADD CONSTRAINT [XPKBuyer] PRIMARY KEY  CLUSTERED ([IDBuyer] ASC)
+go
+
+ALTER TABLE [City]
+	ADD CONSTRAINT [XPKCity] PRIMARY KEY  CLUSTERED ([IDCity] ASC)
+go
+
+ALTER TABLE [Line]
+	ADD CONSTRAINT [XPKLine] PRIMARY KEY  CLUSTERED ([IDLine] ASC)
+go
+
+ALTER TABLE [Order]
+	ADD CONSTRAINT [XPKOrder] PRIMARY KEY  CLUSTERED ([IDOrder] ASC)
+go
+
+ALTER TABLE [OrderItems]
+	ADD CONSTRAINT [XPKOrderItems] PRIMARY KEY  CLUSTERED ([IDOrder] ASC,[IDArticle] ASC)
+go
+
+ALTER TABLE [OrderTransaction]
+	ADD CONSTRAINT [XPKOrderTransaction] PRIMARY KEY  CLUSTERED ([IDTransaction] ASC)
+go
+
+ALTER TABLE [Shop]
+	ADD CONSTRAINT [XPKShop] PRIMARY KEY  CLUSTERED ([IDShop] ASC)
+go
+
+ALTER TABLE [ShopTransaction]
+	ADD CONSTRAINT [XPKShopTransaction] PRIMARY KEY  CLUSTERED ([IDTransaction] ASC)
+go
+
+ALTER TABLE [Transaction]
+	ADD CONSTRAINT [XPKTransaction] PRIMARY KEY  CLUSTERED ([IDTransaction] ASC)
+go
+
+
+ALTER TABLE [Article]
+	ADD CONSTRAINT [R_4] FOREIGN KEY ([IDShop]) REFERENCES [Shop]([IDShop])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [Buyer]
+	ADD CONSTRAINT [R_5] FOREIGN KEY ([IDCity]) REFERENCES [City]([IDCity])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [Line]
+	ADD CONSTRAINT [R_14] FOREIGN KEY ([City1]) REFERENCES [City]([IDCity])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [Line]
+	ADD CONSTRAINT [R_15] FOREIGN KEY ([City2]) REFERENCES [City]([IDCity])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [Order]
+	ADD CONSTRAINT [R_6] FOREIGN KEY ([IDBuyer]) REFERENCES [Buyer]([IDBuyer])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [Order]
+	ADD CONSTRAINT [R_7] FOREIGN KEY ([IDCity]) REFERENCES [City]([IDCity])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [OrderItems]
+	ADD CONSTRAINT [R_16] FOREIGN KEY ([IDOrder]) REFERENCES [Order]([IDOrder])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [OrderItems]
+	ADD CONSTRAINT [R_17] FOREIGN KEY ([IDArticle]) REFERENCES [Article]([IDArticle])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [OrderTransaction]
+	ADD CONSTRAINT [R_12] FOREIGN KEY ([IDTransaction]) REFERENCES [Transaction]([IDTransaction])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [Shop]
+	ADD CONSTRAINT [R_3] FOREIGN KEY ([IDCity]) REFERENCES [City]([IDCity])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [ShopTransaction]
+	ADD CONSTRAINT [R_11] FOREIGN KEY ([IDTransaction]) REFERENCES [Transaction]([IDTransaction])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+ALTER TABLE [ShopTransaction]
+	ADD CONSTRAINT [R_13] FOREIGN KEY ([IDShop]) REFERENCES [Shop]([IDShop])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [Transaction]
+	ADD CONSTRAINT [R_10] FOREIGN KEY ([IDOrder]) REFERENCES [Order]([IDOrder])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
